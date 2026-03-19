@@ -306,7 +306,7 @@ Rcpp::List intradayJumpTest_cpp(const arma::vec& price, double theta, int p, int
     kn = kn + kn % 2;
 
     // Long-run noise variance
-    double omega2 = omega2(logp);
+    double noise_var = omega2(logp);
 
     // Subsampled covariance
     Rcpp::List sub = f_subsampler(logp, kn, p, L, mQ, q, varpi);
@@ -353,7 +353,7 @@ Rcpp::List intradayJumpTest_cpp(const arma::vec& price, double theta, int p, int
     
     double psi1 = psi_list["psi1"];
     double psi2 = psi_list["psi2"];
-    double bias = (psi1 / (psi2 * theta_o * theta_o)) * omega2;
+    double bias = (psi1 / (psi2 * theta_o * theta_o)) * noise_var;
 
     double RV = std::max(((RV_raw / psi2) / theta_o) - bias, 0.0);
     RV = 100.0 * std::sqrt(250.0 * RV);
