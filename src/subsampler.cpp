@@ -13,7 +13,7 @@ inline double tent(double x) {
 // Pre-averaged return series (tent kernel hard-coded)
 // logp: log-price vector, K: bandwidth
 // [[Rcpp::export]]
-arma::vec aux_preavgk_rcpp(const arma::vec& logp, int K) {
+arma::vec aux_preavgk(const arma::vec& logp, int K) {
     
     arma::vec r = arma::diff(logp);
     
@@ -34,7 +34,7 @@ arma::vec aux_preavgk_rcpp(const arma::vec& logp, int K) {
 
 // E[|Z|^r], Z ~ N(0,1), product over elements of vpow
 // [[Rcpp::export]]
-double f_mu_rcpp(const arma::vec& vpow) {
+double f_mu(const arma::vec& vpow) {
     
     double out = 1.0;
     
@@ -51,7 +51,7 @@ double f_mu_rcpp(const arma::vec& vpow) {
 
 // Kernel constants psi1, psi2 for bias correction (tent kernel)
 // [[Rcpp::export]]
-Rcpp::List f_psi_rcpp(int K) {
+Rcpp::List f_psi(int K) {
     
     arma::vec g(K + 1);
     
@@ -72,7 +72,7 @@ Rcpp::List f_psi_rcpp(int K) {
 
 // Long-run noise variance estimator (Jacod, Li, Zheng 2019)
 // [[Rcpp::export]]
-double omega2_rcpp(const arma::vec& logp) {
+double omega2(const arma::vec& logp) {
     
     int n = logp.n_elem;      // total number of prices
     int nd = n - 1;           // number of returns (n_ in R)
@@ -126,7 +126,7 @@ double omega2_rcpp(const arma::vec& logp) {
 
 // Subsampled power-variation + covariance Sigma*
 // [[Rcpp::export]]
-Rcpp::List f_subsampler_rcpp(const arma::vec& logp, int K, int p, int L, const arma::mat& mQ, double q, double varpi) {
+Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::mat& mQ, double q, double varpi) {
     
     arma::vec r = arma::diff(logp);
     
@@ -153,7 +153,7 @@ Rcpp::List f_subsampler_rcpp(const arma::vec& logp, int K, int p, int L, const a
     }
 
     // Full-sample pre-averaged returns (scaled)
-    arma::vec r_pa = std::pow((double)nObs, 0.25) * aux_preavgk_rcpp(logp, K);
+    arma::vec r_pa = std::pow((double)nObs, 0.25) * aux_preavgk(logp, K);
     r_pa = arma::abs(r_pa);
 
     // Truncation threshold
@@ -171,7 +171,7 @@ Rcpp::List f_subsampler_rcpp(const arma::vec& logp, int K, int p, int L, const a
     arma::uvec idx_pa_K_vec = idx_pa_vec + K;  // idx_pa + K (0-based)
 
     arma::vec mu1_vec = {1.0, 1.0};
-    double mu1 = f_mu_rcpp(mu1_vec);
+    double mu1 = f_mu(mu1_vec);
     arma::vec y_bv = r_pa.elem(idx_pa_vec) % r_pa.elem(idx_pa_K_vec);
     double pbv = arma::mean(y_bv) / mu1;
 
@@ -204,7 +204,7 @@ Rcpp::List f_subsampler_rcpp(const arma::vec& logp, int K, int p, int L, const a
     for (int k = 0; k < m; k++) {
         
         arma::vec mQ_row = mQ.row(k).t();
-        double mu_k = f_mu_rcpp(mQ_row);
+        double mu_k = f_mu(mQ_row);
 
         arma::vec y_full = arma::pow(r_pa_t.elem(idx_pa_vec), mQ(k, 0)) % arma::pow(r_pa_t.elem(idx_pa_K_vec), mQ(k, 1));
         vn[k] = arma::mean(y_full) / mu_k;
@@ -235,7 +235,7 @@ Rcpp::List f_subsampler_rcpp(const arma::vec& logp, int K, int p, int L, const a
             
             for (int ci = 0; ci < c; ci++) {
                 
-                r_pa_ss_mat.col(ci) = std::pow((double)nObs, 0.25) * aux_preavgk_rcpp(logp_ss.col(ci), K);
+                r_pa_ss_mat.col(ci) = std::pow((double)nObs, 0.25) * aux_preavgk(logp_ss.col(ci), K);
                 
             }
             
@@ -306,10 +306,10 @@ Rcpp::List intradayJumpTest_cpp(const arma::vec& price, double theta, int p, int
     kn = kn + kn % 2;
 
     // Long-run noise variance
-    double omega2 = omega2_rcpp(logp);
+    double omega2 = omega2(logp);
 
     // Subsampled covariance
-    Rcpp::List sub = f_subsampler_rcpp(logp, kn, p, L, mQ, q, varpi);
+    Rcpp::List sub = f_subsampler(logp, kn, p, L, mQ, q, varpi);
     arma::rowvec vn = sub["vn"];
     arma::mat Sigma = sub["sigma"];
 
@@ -349,7 +349,7 @@ Rcpp::List intradayJumpTest_cpp(const arma::vec& price, double theta, int p, int
     double JF = (t_stat > q_critical) ? 1.0 : 0.0;
 
     // Bias correction
-    Rcpp::List psi_list = f_psi_rcpp(kn);
+    Rcpp::List psi_list = f_psi(kn);
     
     double psi1 = psi_list["psi1"];
     double psi2 = psi_list["psi2"];

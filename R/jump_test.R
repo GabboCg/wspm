@@ -1,10 +1,18 @@
-# =============================================================================
-# wspm: Warp Speed Price Moves — Intraday Jump Test
-# C++ backend (RcppArmadillo) + main entry point
+# ======================================================== #
 #
-# Reference: Christensen et al., 2025, Journal of Financial Economics 167, 104010.
-#            
-# =============================================================================
+#         Warp Speed Price Moves — Intraday Jump Test
+#                C++ backend (RcppArmadillo) 
+#
+#                 Gabriel E. Cabrera-Guzmán
+#                The University of Manchester
+#
+#                       Spring, 2026
+#
+#                https://gcabrerag.rbind.io
+#
+# ------------------------------ #
+# email: gabriel.cabreraguzman@postgrad.manchester.ac.uk
+# ======================================================== #
 
 # C++ compilation is handled by load.R (Rcpp::sourceCpp must be called at the
 # top level so the loaded DLL is not garbage-collected).  Do not call

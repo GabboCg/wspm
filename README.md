@@ -1,4 +1,4 @@
-# wspm: Warp Speed Price Moves — Intraday Jump Test
+# Warp Speed Price Moves — Intraday Jump Test
 
 An R implementation of the noise-robust intraday jump test developed in:
 
@@ -51,11 +51,11 @@ Implemented in `src/subsampler.cpp` via RcppArmadillo:
 
 | Function | Description |
 |----------|-------------|
-| `aux_preavgk_rcpp(logp, K)` | Pre-averaged return series (tent kernel hard-coded) |
-| `f_mu_rcpp(vpow)` | Computes `E[|Z|^r]` for `Z ~ N(0,1)` |
-| `f_subsampler_rcpp(logp, K, p, L, mQ, q, varpi)` | Subsampled power variation estimates and covariance matrix `Sigma*` |
-| `f_psi_rcpp(K)` | Kernel constants `psi1`, `psi2` for bias correction (tent kernel) |
-| `omega2_rcpp(logp)` | Long-run noise variance (Jacod, Li & Zheng 2019) |
+| `aux_preavgk(logp, K)` | Pre-averaged return series (tent kernel hard-coded) |
+| `f_mu(vpow)` | Computes `E[|Z|^r]` for `Z ~ N(0,1)` |
+| `f_subsampler(logp, K, p, L, mQ, q, varpi)` | Subsampled power variation estimates and covariance matrix `Sigma*` |
+| `f_psi(K)` | Kernel constants `psi1`, `psi2` for bias correction (tent kernel) |
+| `omega2(logp)` | Long-run noise variance (Jacod, Li & Zheng 2019) |
 
 ## The Test Statistic
 
