@@ -1,12 +1,17 @@
-# =============================================================================
-# wspm — project loader
+# ======================================================== #
 #
-# Sources all R modules in dependency order (mirrors devtools::load_all()).
-# Run once per session from the project root:
+#                      Project Loader
 #
-#   source("load.R")
+#                 Gabriel E. Cabrera-Guzmán
+#                The University of Manchester
 #
-# =============================================================================
+#                       Spring, 2026
+#
+#                https://gcabrerag.rbind.io
+#
+# ------------------------------ #
+# email: gabriel.cabreraguzman@postgrad.manchester.ac.uk
+# ======================================================== #
 
 # Compile C++ and load exported symbols into the global environment.
 # Must be called at top level (not nested inside source()) so the DLL
