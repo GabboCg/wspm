@@ -1,5 +1,8 @@
 # Warp Speed Price Moves — Intraday Jump Test
 
+[![R](https://img.shields.io/badge/R-%3E%3D4.1-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
+[![WRDS](https://img.shields.io/badge/Data-WRDS-003366)](https://wrds-www.wharton.upenn.edu/)
+
 An R implementation of the noise-robust intraday jump test developed in:
 
 > Christensen, K., Timmermann, A., & Veliyev, B. (2025). Warp speed price moves: Jumps after earnings announcements. *Journal of Financial Economics*, 167, 104010. https://doi.org/10.1016/j.jfineco.2025.104010
