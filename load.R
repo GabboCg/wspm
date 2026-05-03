@@ -19,7 +19,7 @@
 Rcpp::sourceCpp(file.path("src", "subsampler.cpp"))
 
 # Import intradayJumpTest() wrapper
-source(file.path("R", "jump_test.R"))   
+source(file.path("R", "jump-test.R"))   
 
 # Powers
 mQ <- matrix(c(1, 2, 1, 0), nrow = 2, ncol = 2)
