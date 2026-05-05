@@ -3,13 +3,11 @@
 [![R](https://img.shields.io/badge/R-%3E%3D4.1-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
 [![WRDS](https://img.shields.io/badge/Data-WRDS-003366)](https://wrds-www.wharton.upenn.edu/)
 
-An R implementation of the noise-robust intraday jump test developed in:
-
-> Christensen, K., Timmermann, A., & Veliyev, B. (2025). Warp speed price moves: Jumps after earnings announcements. *Journal of Financial Economics*, 167, 104010. https://doi.org/10.1016/j.jfineco.2025.104010
+An R implementation of the noise-robust intraday jump test developed by Christensen el al. (2025, JFE).
 
 ## Overview
 
-Corporate earnings announcements should, in efficient markets, trigger near-instantaneous jumps in stock prices. Testing this at the tick-by-tick level requires a jump test that is **robust to the high levels of microstructure noise** characteristic of after-hours trading sessions. This package implements the pre-averaging, subsampling-based bipower variation jump test of Christensen et al. (2025), which generalizes the classical Barndorff-Nielsen and Shephard (2006) test.
+Corporate earnings announcements should, in efficient markets, trigger near-instantaneous jumps in stock prices. Testing this at the tick-by-tick level requires a jump test that is **robust to the high levels of microstructure noise** characteristic of after-hours trading sessions. This package implements the pre-averaging, subsampling-based bipower variation jump test of Christensen et al. (2025, JFE), which generalizes the classical Barndorff-Nielsen and Shephard (2006, JoFE) test.
 
 The key innovations are:
 
@@ -17,7 +15,7 @@ The key innovations are:
 
 - A subsampling estimator for the asymptotic variance matrix, valid under heteroscedasticity and serial dependence in the noise process
 
-- Bias correction for the long-run noise variance following Jacod, Li, and Zheng (2019)
+- Bias correction for the long-run noise variance following Jacod, Li, and Zheng (2019, JoE)
 
 - Truncation of the bipower covariance estimator to achieve robustness to large jumps
 
@@ -58,7 +56,7 @@ Implemented in `src/subsampler.cpp` via RcppArmadillo:
 | `f_mu(vpow)` | Computes `E[\|Z\|^r]` for `Z ~ N(0,1)` |
 | `f_subsampler(logp, K, p, L, mQ, q, varpi)` | Subsampled power variation estimates and covariance matrix `Sigma*` |
 | `f_psi(K)` | Kernel constants `psi1`, `psi2` for bias correction (tent kernel) |
-| `omega2(logp)` | Long-run noise variance (Jacod, Li & Zheng 2019) |
+| `omega2(logp)` | Long-run noise variance (Jacod, Li & Zheng 2019, JoE) |
 
 ## The Test Statistic
 
@@ -74,7 +72,7 @@ The null is rejected at level `alpha` when `J_n > Phi^{-1}(1 - alpha/n)`, where 
 
 ## Usage
 
-Load from the project root (compiles C++ and sources `R/jump_test.R`):
+Load from the project root (compiles C++ and sources `R/jump-test.R`):
 
 ```r
 source("load.R")
@@ -101,7 +99,7 @@ result$JV  # jump proportion (%)
 
 ## Notes
 
-- The function expects tick-time sampled data (all price changes retained). Observations with identical timestamps should be aggregated to an average price before calling the function, consistent with Griffin and Oomen (2008).
+- The function expects tick-time sampled data (all price changes retained). Observations with identical timestamps should be aggregated to an average price before calling the function, consistent with Griffin and Oomen (2008, ER).
 
 - The pre-averaging bandwidth `kn` is forced to be even, as required by the theory.
 
@@ -115,10 +113,12 @@ result$JV  # jump proportion (%)
 
 - Christensen, K., Oomen, R., & Podolskij, M. (2018). Fact or friction: Jumps at ultra high frequency. *Journal of Financial Economics*, 114(3), 576–599.
 
+- Christensen, K., Timmermann, A., & Veliyev, B. (2025). Warp speed price moves: Jumps after earnings announcements. *Journal of Financial Economics*, 167, 104010. 
+
 - Griffin, J.E., & Oomen, R.C.A. (2008). Sampling returns for realized variance calculations: Tick time or transaction time? *Econometric Reviews*, 27(1–3), 230–253.
 
-- Jacod, J., Li, Y., & Zheng, X. (2019). Estimating the integrated volatility with tick observations. *Journal of Econometrics*, 208(1), 80–100.
-
 - Jacod, J., Li, Y., Mykland, P.A., Podolskij, M., & Vetter, M. (2009). Microstructure noise in the continuous case: The pre-averaging approach. *Stochastic Processes and their Applications*, 119(7), 2249–2276.
+
+- Jacod, J., Li, Y., & Zheng, X. (2019). Estimating the integrated volatility with tick observations. *Journal of Econometrics*, 208(1), 80–100.
 
 - Podolskij, M., & Vetter, M. (2009). Estimation of volatility functionals in the simultaneous presence of microstructure noise and jumps. *Bernoulli*, 15(3), 634–658.
