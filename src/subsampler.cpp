@@ -78,7 +78,7 @@ double omega2(const arma::vec& logp) {
     int nd = n - 1;           // number of returns (n_ in R)
     int ell1 = (int)std::round(std::pow((double)nd, 1.0 / 5.0));
     int ell2 = (int)std::round(std::pow((double)nd, 1.0 / 8.0));
-
+    
     // Forward moving average: logp_avg[i] = mean(logp[i..i+ell1-1])
     arma::vec logp_avg(n, arma::fill::zeros);
     for (int i = 0; i < n; i++) {
@@ -87,7 +87,7 @@ double omega2(const arma::vec& logp) {
         logp_avg[i] = arma::mean(logp.subvec(i, end));
         
     }
-
+    
     // Um[m] for m = 0..ell1
     arma::vec Um(ell1 + 1, arma::fill::zeros);
     
@@ -103,14 +103,14 @@ double omega2(const arma::vec& logp) {
     }
     
     arma::vec base_a = logp.subvec(0, len_a - 1) - logp_avg.subvec(2 * ell1, n - 3 * ell1 - 1);
-
+    
     for (int m = 0; m <= ell1; m++) {
         
         arma::vec b = logp.subvec(m, len_a - 1 + m) - logp_avg.subvec(m + 4 * ell1, n - ell1 - 1 + m);
         Um[m] = arma::mean(base_a % b);
         
     }
-
+    
     // Bartlett-weighted sum: omega2 = Um[0] + 2 * sum_{j=1}^{ell2-1} w[j]*Um[j]
     double omega2 = Um[0];
     for (int j = 1; j <= ell2 - 1; j++) {
@@ -132,7 +132,7 @@ Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::
     
     int nObs = (int)r.n_elem;
     double dt = 1.0 / nObs;
-
+    
     // Adaptive p/L reduction
     int c = (int)std::floor((double)std::floor((double)nObs / (p * K)) / L);
     
@@ -151,11 +151,11 @@ Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::
         c = (int)std::floor((double)std::floor((double)nObs / (p * K)) / L);
         
     }
-
+    
     // Full-sample pre-averaged returns (scaled)
     arma::vec r_pa = std::pow((double)nObs, 0.25) * aux_preavgk(logp, K);
     r_pa = arma::abs(r_pa);
-
+    
     // Truncation threshold
     int out_n_full = nObs - 2 * K + 2;  // length of r_pa
     arma::uvec idx_pa = arma::regspace<arma::uvec>(0, out_n_full - 2 * K + 1 - 1);
@@ -169,21 +169,21 @@ Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::
     if (idx_pa_len < 1) idx_pa_len = 1;
     arma::uvec idx_pa_vec = arma::regspace<arma::uvec>(0, idx_pa_len - 1);
     arma::uvec idx_pa_K_vec = idx_pa_vec + K;  // idx_pa + K (0-based)
-
+    
     arma::vec mu1_vec = {1.0, 1.0};
     double mu1 = f_mu(mu1_vec);
     arma::vec y_bv = r_pa.elem(idx_pa_vec) % r_pa.elem(idx_pa_K_vec);
     double pbv = arma::mean(y_bv) / mu1;
-
+    
     double cutoff = q * std::sqrt(pbv) * std::pow((double)nObs, 0.25 - varpi);
     arma::vec r_pa_t = r_pa;
     arma::uvec above = arma::find(r_pa_t > cutoff);
     r_pa_t.elem(above).zeros();
-
+    
     int m = (int)mQ.n_rows;
     arma::rowvec vn(m, arma::fill::zeros);
     arma::mat vln(L, m, arma::fill::zeros);
-
+    
     // Block matrix rb: (K*p) x (c*L) columns
     int maxr = K * p * c * L;
     arma::vec r_block = r.subvec(0, maxr - 1);
@@ -194,21 +194,21 @@ Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::
         rb.col(j) = r_block.subvec(j * K * p, j * K * p + K * p - 1);
         
     }
-
+    
     // idx_pa_b for subsampled: 1:(K*p - 2*K + 2) -> 0-based: 0..(K*p - 2*K + 1)
     int idx_pa_b_len = K * p - 2 * K + 2;
     if (idx_pa_b_len < 1) idx_pa_b_len = 1;
     arma::uvec idx_pa_b_vec = arma::regspace<arma::uvec>(0, idx_pa_b_len - 1);
     arma::uvec idx_pa_b_K_vec = idx_pa_b_vec + K;
-
+    
     for (int k = 0; k < m; k++) {
         
         arma::vec mQ_row = mQ.row(k).t();
         double mu_k = f_mu(mQ_row);
-
+        
         arma::vec y_full = arma::pow(r_pa_t.elem(idx_pa_vec), mQ(k, 0)) % arma::pow(r_pa_t.elem(idx_pa_K_vec), mQ(k, 1));
         vn[k] = arma::mean(y_full) / mu_k;
-
+        
         for (int l = 0; l < L; l++) {
             
             // Gather columns l, l+L, l+2L, ..., l+(c-1)*L from rb
@@ -219,7 +219,7 @@ Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::
                 rb_sub.col(ci) = rb.col(l + ci * L);
                 
             }
-
+            
             // logp_ss: prepend 0, cumsum per column -> (K*p+1) x c
             arma::mat logp_ss(K * p + 1, c, arma::fill::zeros);
             
@@ -228,7 +228,7 @@ Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::
                 logp_ss.col(ci).subvec(1, K * p) = arma::cumsum(rb_sub.col(ci));
                 
             }
-
+            
             // r_pa_ss: apply aux_preavgk_rcpp to each column
             int col_out_n = K * p - K + 2;  // output length per column
             arma::mat r_pa_ss_mat(col_out_n, c);
@@ -240,15 +240,15 @@ Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::
             }
             
             r_pa_ss_mat = arma::abs(r_pa_ss_mat);
-
+            
             // Truncate
             arma::mat r_pa_t_ss = r_pa_ss_mat;
             arma::uvec above_ss = arma::find(r_pa_t_ss > cutoff);
             r_pa_t_ss.elem(above_ss).zeros();
-
+            
             // Power variation for this subsample
             arma::mat y_ss = arma::pow(r_pa_t_ss.rows(idx_pa_b_vec), mQ(k, 0)) % arma::pow(r_pa_t_ss.rows(idx_pa_b_K_vec), mQ(k, 1));
-           
+            
             // mean over columns, then mean of those means
             double col_mean_sum = 0.0;
             
@@ -263,7 +263,7 @@ Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::
         }
         
     }
-
+    
     // d_vln = (vln - vn) * sqrt(c * (K*p - 2*K + 2) * sqrt(dt))
     arma::mat d_vln = vln;
     
@@ -275,9 +275,9 @@ Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::
     
     double scale = std::sqrt((double)c * (double)(K * p - 2 * K + 2) * std::sqrt(dt));
     d_vln *= scale;
-
+    
     arma::mat sigma = (d_vln.t() * d_vln) / L;
-
+    
     // Recompute RV (mQ row with c(2,0)) without truncation
     for (int k = 0; k < m; k++) {
         
@@ -289,7 +289,7 @@ Rcpp::List f_subsampler(const arma::vec& logp, int K, int p, int L, const arma::
         }
         
     }
-
+    
     return Rcpp::List::create(Rcpp::Named("vn") = vn, Rcpp::Named("sigma") = sigma);
     
 }
@@ -300,19 +300,19 @@ Rcpp::List intradayJumpTest_cpp(const arma::vec& price, double theta, int p, int
     
     int nObs = (int)price.n_elem;
     arma::vec logp = arma::log(price);
-
+    
     // kn: bandwidth, forced even
     int kn = (int)std::round(theta * std::sqrt((double)nObs));
     kn = kn + kn % 2;
-
+    
     // Long-run noise variance
     double noise_var = omega2(logp);
-
+    
     // Subsampled covariance
     Rcpp::List sub = f_subsampler(logp, kn, p, L, mQ, q, varpi);
     arma::rowvec vn = sub["vn"];
     arma::mat Sigma = sub["sigma"];
-
+    
     // Locate BV (first non-(2,0)) and RV (2,0) columns
     int bv_col = -1, rv_col = -1;
     int m = (int)mQ.n_rows;
@@ -334,33 +334,33 @@ Rcpp::List intradayJumpTest_cpp(const arma::vec& price, double theta, int p, int
     // Default fallback: BV = col 0, RV = col 1
     if (bv_col == -1) bv_col = 0;
     if (rv_col == -1) rv_col = 1;
-
+    
     double BV_raw = vn[bv_col];
     double RV_raw = vn[rv_col];
-
+    
     double JV = 100.0 * (1.0 - BV_raw / RV_raw);
-
+    
     double avar = Sigma(rv_col, rv_col) + Sigma(bv_col, bv_col) - 2.0 * Sigma(rv_col, bv_col);
-
+    
     double theta_o = (double)kn / std::sqrt((double)nObs);
     double q_critical = R::qnorm(1.0 - 0.01 / nObs, 0.0, 1.0, 1, 0);
     double t_stat = std::pow((double)(nObs - 2 * kn + 2), 0.25) * (RV_raw - BV_raw) / std::sqrt(avar);
-
+    
     double JF = (t_stat > q_critical) ? 1.0 : 0.0;
-
+    
     // Bias correction
     Rcpp::List psi_list = f_psi(kn);
     
     double psi1 = psi_list["psi1"];
     double psi2 = psi_list["psi2"];
     double bias = (psi1 / (psi2 * theta_o * theta_o)) * noise_var;
-
+    
     double RV = std::max(((RV_raw / psi2) / theta_o) - bias, 0.0);
     RV = 100.0 * std::sqrt(250.0 * RV);
-
+    
     double BV = std::max(((BV_raw / psi2) / theta_o) - bias, 0.0);
     BV = 100.0 * std::sqrt(250.0 * BV);
-
+    
     return Rcpp::List::create(Rcpp::Named("RV") = RV,
                               Rcpp::Named("BV") = BV,
                               Rcpp::Named("JV") = JV,
