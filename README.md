@@ -110,15 +110,9 @@ result$JV  # jump proportion (%)
 ## References
 
 - Barndorff-Nielsen, O.E., & Shephard, N. (2006). Econometrics of testing for jumps in financial economics using bipower variation. *Journal of Financial Econometrics*, 4(1), 1–30.
-
 - Christensen, K., Oomen, R., & Podolskij, M. (2018). Fact or friction: Jumps at ultra high frequency. *Journal of Financial Economics*, 114(3), 576–599.
-
 - Christensen, K., Timmermann, A., & Veliyev, B. (2025). Warp speed price moves: Jumps after earnings announcements. *Journal of Financial Economics*, 167, 104010. 
-
 - Griffin, J.E., & Oomen, R.C.A. (2008). Sampling returns for realized variance calculations: Tick time or transaction time? *Econometric Reviews*, 27(1–3), 230–253.
-
 - Jacod, J., Li, Y., Mykland, P.A., Podolskij, M., & Vetter, M. (2009). Microstructure noise in the continuous case: The pre-averaging approach. *Stochastic Processes and their Applications*, 119(7), 2249–2276.
-
 - Jacod, J., Li, Y., & Zheng, X. (2019). Estimating the integrated volatility with tick observations. *Journal of Econometrics*, 208(1), 80–100.
-
 - Podolskij, M., & Vetter, M. (2009). Estimation of volatility functionals in the simultaneous presence of microstructure noise and jumps. *Bernoulli*, 15(3), 634–658.
